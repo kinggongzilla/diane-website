@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Piano Lesson Booking</title>
+<style>
+body { font-family: 'Segoe UI', sans-serif; background:#f5f5f5; margin:0; padding:20px; }
+/*button { cursor:pointer; border:none; border-radius:8px; padding:12px 20px; font-size:1.1em; transition:0.2s; } 
+button:hover:not(:disabled) { opacity:0.85; }
+button:disabled { background:#ccc; cursor:not-allowed; } */
+input, select { width:100%; padding:12px; font-size:1em; margin:8px 0; border-radius:6px; border:1px solid #ccc; box-sizing:border-box; }
+.input-error { border:2px solid #dc3545; }
+
+#wizard { background:white; max-width:600px; margin:30px auto; padding:20px; border-radius:15px; box-shadow:0 5px 20px rgba(0,0,0,0.2);}
+.step { display:none; }
+.step.active { display:block; }
+.step-header { font-weight:bold; font-size:1.2em; margin-bottom:15px; }
+.summary-field { margin-bottom:10px; }
+.time-slot { display:inline-block; margin:5px; padding:10px 12px; border-radius:8px; border:1px solid #007BFF; cursor:pointer; }
+.time-slot.selected { background:#007BFF; color:white; }
+.time-slot.disabled { background:#ccc; color:#666; cursor:not-allowed; }
+.nav-buttons { display:flex; justify-content:space-between; margin-top:20px; }
+#step1 button.selected { background-color: #007BFF !important; color: white !important; border: 1px solid #007BFF; }
+
+/* Close button improvements */
+.close-btn {
+    position:absolute;
+    top:10px;
+    right:10px;
+    background:#dc3545;
+    color:white;
+    border:none;
+    border-radius:50%;
+    width:35px;
+    height:35px;
+    font-size:1.2em;
+    font-weight:bold;
+    line-height:1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    transition:0.2s;
+}
+
+.close-btn:hover { background:#b02a37; }
+
+/* Floating silver button */
+.floating-btn {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1100;
+  padding: 15px 25px;
+  font-size: 1.2em;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+
+  /* Silver matte-shiny style */
+  background: linear-gradient(
+    180deg,
+    rgba(192,192,192,1) 0%,      /* shiny silver */
+    rgba(169,169,169,0.95) 40%,  /* matte silver */
+    rgba(192,192,192,0.7) 100%   /* fades outward */
+  );
+  color: #222;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+
+  /* Smooth edges with transparency outward */
+  backdrop-filter: blur(4px);
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.floating-btn:hover {
+  transform: translateX(-50%) scale(1.05);
+  opacity: 0.9;
+}
+</style>
+</head>
+<body>
+  <button class="floating-btn" onclick="openBooking()">Book a Piano Lesson</button>
+
+  <!--<button onclick="openBooking()" style="padding:15px 25px; font-size:1.2em; background:#007BFF; color:white; border:none; border-radius:10px;">Book a Piano Lesson</button> -->
+
+  <div id="wizardModal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:1000;">
+    <div style="width:95%; max-width:650px; background:white; border-radius:15px; padding:20px; position:relative;">
+      <button class="close-btn" onclick="closeBooking()">×</button>
+
+      <div id="wizard">
+        <div id="stepIndicator" style="margin-bottom:15px;font-weight:bold;">Step 1 of 4</div>
+
+        <!-- Step 1: Duration & Lesson Type -->
+        <div class="step active" id="step1">
+          <div class="step-header">Select Duration</div>
+          <button class="option-btn" data-duration onclick="selectDuration(30, this)">30 min</button>
+          <button class="option-btn" data-duration onclick="selectDuration(60, this)">1 hour</button>
+
+          <div class="step-header" style="margin-top:20px;">Select Lesson Type</div>
+          <button class="option-btn" data-type onclick="selectType('Student Location', this)">At Student's Location</button>
+          <button class="option-btn" data-type onclick="selectType('Online', this)">Online</button>
+          <button class="option-btn" data-type onclick="selectType('Teacher Location', this)">At Teacher's Location</button>
+
+          <div class="nav-buttons">
+            <div></div>
+            <button onclick="nextStep()" id="step1Next">Next ▶</button>
+          </div>
+        </div>
+
+        <!-- Step 2: Date & Time -->
+        <div class="step" id="step2">
+          <div class="step-header">Select Date</div>
+          <input type="date" id="selectedDate" min="" onchange="fetchTimeSlots()">
+          
+          <div class="step-header" style="margin-top:15px;">Select Time Slot</div>
+          <div id="timeSlots"></div>
+
+          <div class="nav-buttons">
+            <button onclick="prevStep()">◀ Back</button>
+            <button onclick="nextStep()">Next ▶</button>
+          </div>
+        </div>
+
+        <!-- Step 3: Contact Details -->
+        <div class="step" id="step3">
+          <div class="step-header">Your Contact Information</div>
+          <input type="text" id="name" placeholder="Full Name">
+          <input type="email" id="email" placeholder="Email">
+          <input type="tel" id="phone" placeholder="Phone Number">
+
+          <div class="nav-buttons">
+            <button onclick="prevStep()">◀ Back</button>
+            <button onclick="nextStep()">Next ▶</button>
+          </div>
+        </div>
+
+        <!-- Step 4: Summary & Confirmation -->
+        <div class="step" id="step4">
+          <div class="step-header">Summary</div>
+          <div id="summary"></div>
+
+          <div class="nav-buttons">
+            <button onclick="prevStep()">◀ Back</button>
+            <button onclick="confirmAppointment()">Confirm & Book</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentStep  = 1;
+    let duration     = null;
+    let lessonType   = null;
+    let selectedDate = null;
+    let selectedTime = null;
+    let name = '', email = '', phone = '';
+
+    function resetWizard(){
+        currentStep  = 1;
+        duration     = null;
+        lessonType   = null;
+        selectedDate = null;
+        selectedTime = null;
+        name         = '';
+        email        = '';
+        phone        = '';
+
+        // clear input fields
+        document.getElementById('name').value = '';
+        document.getElementById('email').value = '';
+        document.getElementById('phone').value = '';
+        document.getElementById('selectedDate').value = '';
+        document.getElementById('timeSlots').innerHTML = '';
+        document.getElementById('summary').innerHTML = '';
+
+        // clear button selections
+        document.querySelectorAll('#step1 button').forEach(b=>{
+            b.classList.remove('selected');
+        });
+        document.querySelectorAll('.time-slot').forEach(b=>{
+            b.classList.remove('selected');
+        });
+
+        // reset back to Step 1
+        showStep(1);
+    }
+    
+    function openBooking(){
+        document.getElementById('wizardModal').style.display='flex';
+        resetWizard();
+    }
+    function closeBooking(){
+        document.getElementById('wizardModal').style.display='none';
+        resetWizard();
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('selectedDate').setAttribute('min', today);
+        resetWizard(); 
+    });
+
+    function showStep(step){
+        document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));
+        document.getElementById('step'+step).classList.add('active');
+        document.getElementById('stepIndicator').innerText = `Step ${step} of 4`;
+
+        // If showing step 2 and we have a selected date, fetch time slots
+        if(step === 2) {
+            const dateValue = document.getElementById('selectedDate').value;
+            if(dateValue) {
+                fetchTimeSlots();
+            }
+        }
+    }
+
+    function nextStep(){
+        if(currentStep === 1){
+            if(!duration || !lessonType){
+                alert('Please select duration and lesson type');
+                return;
+            }
+        }
+        if(currentStep===2){
+            if(!selectedDate){
+                alert('Please select a date');
+                return;
+            }
+            if(!selectedTime){
+                alert('Please select a time slot');
+                return;
+            }
+        }
+        if(currentStep===3){
+            name = document.getElementById('name').value.trim();
+            email = document.getElementById('email').value.trim();
+            phone = document.getElementById('phone').value.trim();
+            if(!name || (!email && !phone)){
+                alert('Please provide your name and at least one contact method');
+                return;
+            }
+        }
+        if(currentStep<4) currentStep++;
+        if(currentStep===4) renderSummary();
+        showStep(currentStep);
+    }
+
+    function prevStep(){ if(currentStep>1){ currentStep--; showStep(currentStep); } }
+
+    function selectDuration(d, btn){
+        duration = d;
+        document.querySelectorAll('#step1 button[data-duration]').forEach(b=>{
+            b.classList.remove('selected');
+        });
+        btn.classList.add('selected');
+    }
+
+    function selectType(t, btn){
+        lessonType = t;
+        document.querySelectorAll('#step1 button[data-type]').forEach(b=>{
+            b.classList.remove('selected');
+        });
+        btn.classList.add('selected');
+    }
+
+    function timeToMinutes(t) {
+        const [h, m] = t.split(':').map(Number);
+        return h * 60 + m;
+    }
+
+
+    async function fetchTimeSlots() {
+        const container = document.getElementById('timeSlots');
+        selectedDate        = document.getElementById('selectedDate').value;
+        console.log("selected date: ", selectedDate);
+        console.log("duration: ", duration);
+        console.log("lessonType: ", lessonType);
+        selectedTime        = null;
+        container.innerHTML = '';
+        console.log("About to make API call with:", {selectedDate, duration, lessonType});
+
+        if(!selectedDate || !duration) {
+            console.log("Missing required data - selectedDate:", selectedDate, "duration:", duration);
+            container.innerHTML = 'Missing date or duration. Please select both.';
+            return;
+        }
+
+        if(!lessonType) {
+            console.log("Missing lessonType:", lessonType);
+            container.innerHTML = 'Please select lesson type first.';
+            return;
+        }
+
+
+      
+        // clear any previous slots
+        container.innerHTML = '';
+
+        if (!selectedDate || !duration) return;   // nothing to do
+        
+        try {
+            const url = `/appointments?date=${selectedDate}&d=${duration}&type=${encodeURIComponent(lessonType)}`;
+            console.log("Making API call to:", url);
+
+            const resp = await fetch(url);
+            console.log("Response status:", resp.status);
+            console.log("Response ok:", resp.ok);
+
+            if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+
+            const data = await resp.json();   // {date, duration, available: [...]}
+            console.log("Response data:", data);
+            const slots = data.available || [];
+
+            // --------------------------------------------------
+            // Render a button for each slot (your original markup)
+            // --------------------------------------------------
+            slots.forEach(timeStr => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'time-slot';
+                btn.innerText = timeStr;
+
+                // keep your original click handler
+                btn.onclick = () => {
+                    document.querySelectorAll('.time-slot')
+                        .forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                    selectedTime = timeStr;
+                    selectedDate = document.getElementById('selectedDate').value;   // keep the date in sync
+                    console.log('Chosen:', selectedDate, selectedTime,
+                                'duration', duration);
+                };
+
+                container.appendChild(btn);
+            });
+
+            // if the backend returned no usable slots
+            if (slots.length === 0) {
+                container.textContent = 'No available slots for the chosen duration.';
+            }
+        } catch (err) {
+            console.error('Error fetching slots:', err);
+            container.innerHTML = `
+                <div style="color: red; padding: 10px;">
+                    Failed to load time slots. <br>
+                    Error: ${err.message}<br>
+                    Duration: ${duration}<br>
+                    Lesson Type: ${lessonType}<br>
+                    Date: ${selectedDate}
+                </div>
+            `;
+        }
+    }
+    // TODO what about Travel Buffer? 
+    // boy this function is biggst shit..
+    // we should do the get proper resutl from appointment here because it would leak information
+    // about the possible current possiton of the teacher.. ask Hansi.. he can fix this i think
+    //async function fetchTimeSlots(){
+    //    selectedDate        = document.getElementById('selectedDate').value;
+    //    selectedTime        = null;
+    //    const container     = document.getElementById('timeSlots');
+    //    container.innerHTML = '';
+    //    if(!selectedDate || !duration) return;
+
+    //    //const res = await fetch(`/appointments?date=${selectedDate}&d=${duration}`);
+    //    //const res = await fetch(`/appointments?date=${selectedDate}&d=${duration}`);
+    //    const res = await fetch(
+    //        `/appointments?date=${selectedDate}&d=${duration}&l=${lessonType}`
+    //    );
+    //    
+    //    const booked = await res.json();
+
+    //    for(let h=8; h<20; h++){
+    //        for(let m=0; m<60; m+=30){
+    //            const timeStr = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
+    //            const btn     = document.createElement('button');
+    //            btn.innerText = timeStr;
+    //            btn.className = 'time-slot';
+
+    //            const currentStart = timeToMinutes(timeStr);
+    //            const currentEnd   = currentStart + Number(duration);
+
+    //            let disabled = false;
+    //            for(const b of booked){
+    //                const bookedStart = timeToMinutes(b.time);
+    //                const bookedEnd   = bookedStart + Number(b.duration);
+    //                // Simple overlap check (no travel/buffer)
+    //                if (currentStart < bookedEnd && currentEnd > bookedStart) {
+    //                    disabled = true;
+    //                    break;
+    //                }
+    //            }
+    //            if(disabled){ btn.disabled = true; btn.classList.add('disabled'); }
+
+    //            btn.onclick = () => {
+    //                document.querySelectorAll('.time-slot').forEach(b => b.classList.remove('selected'));
+    //                btn.classList.add('selected');
+    //                selectedTime = timeStr;
+    //                selectedDate = document.getElementById('selectedDate').value;
+    //            };
+    //            container.appendChild(btn);
+    //        }
+    //    }
+    //}
+
+    function renderSummary(){
+        const summary = document.getElementById('summary');
+        summary.innerHTML = `
+    <div class="summary-field"><strong>Duration:</strong> ${duration} minutes</div>
+    <div class="summary-field"><strong>Lesson Type:</strong> ${lessonType}</div>
+    <div class="summary-field"><strong>Date:</strong> ${selectedDate}</div>
+    <div class="summary-field"><strong>Time:</strong> ${selectedTime}</div>
+    <div class="summary-field"><strong>Name:</strong> ${name}</div>
+    <div class="summary-field"><strong>Email:</strong> ${email}</div>
+    <div class="summary-field"><strong>Phone:</strong> ${phone}</div>
+    `;
+    }
+
+    async function confirmAppointment(){
+        if(!selectedDate || !selectedTime){
+            alert("Error: Please select a day and time before submitting");
+            return;
+        }
+        try{
+            const res = await fetch('/submit_appointment',{
+                method:'POST',
+                headers:{'Content-Type':'application/json'},
+                body: JSON.stringify({name,email,phone,duration,lesson_type:lessonType,date:selectedDate,time:selectedTime})
+            });
+            const result = await res.json();
+            if(res.ok){ 
+                alert('Appointment booked successfully!'); 
+                location.reload(); 
+            } else { 
+                alert('Error: '+JSON.stringify(result.errors)); 
+            }
+        } catch(e){
+            console.error("Failed to submit appointment:", e);
+            alert('Error submitting appointment. Please try again.');
+        }
+    }
+    </script>
+</body>
+</html>
+

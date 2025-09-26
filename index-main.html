@@ -1,0 +1,648 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Piano Lessons</title>
+<meta name="description" content="Private piano lessons — tailored, patient, and musical. Lessons for beginners through advanced students." />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fdfaf6;--accent:#1f2937;--muted:#6b7280;--card:#fffaf5;--glass:rgba(255,250,245,0.6);--link:#7b3f00;--radius:14px;}
+*{box-sizing:border-box} html,body{margin:0;padding:0} body{font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; background:linear-gradient(180deg,var(--bg),#fffdf9); color:var(--accent); -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; line-height:1.6;}
+main{padding:48px 20px; max-width:1000px; margin:0 auto; display:grid; grid-template-columns:2fr 1fr; gap:32px; justify-content:center;}
+a{color:var(--link); text-decoration:none;} a:hover{text-decoration:underline;}
+.content section{margin-bottom:48px;} header .eyebrow{display:inline-block;font-weight:600;font-family:'Cormorant Garamond', serif;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;font-size:12px;margin-bottom:10px;} h1{margin:6px 0 16px 0;font-family:'Cormorant Garamond', serif;font-size:38px;font-weight:600;color:var(--accent);} p.lead{margin:0 0 24px 0;color:var(--muted);font-size:18px;max-width:70ch;}
+.features{display:flex;gap:14px;margin-top:18px;flex-wrap:wrap;} .feature{background:var(--glass);border-radius:10px;padding:12px 14px;font-size:14px;color:var(--accent);box-shadow:inset 0 -1px 0 rgba(0,0,0,0.02);}
+aside{display:flex;flex-direction:column;gap:24px;} .teacher{text-align:center;} .avatar{width:240px;height:240px;border-radius:50%;object-fit:cover;box-shadow:0 4px 14px rgba(20,20,30,0.06);margin-bottom:12px;} .teacher h3{margin:0;font-size:18px;} .teacher p{margin:6px 0 0 0;color:var(--muted);font-size:14px;}
+.card{background:var(--card);padding:16px;border-radius:12px;box-shadow:0 6px 16px rgba(20,20,30,0.04);} .price{font-size:20px;font-weight:600;color:var(--accent);} .divider{height:1px;background:linear-gradient(90deg,transparent,#eee,transparent);margin: 4px 0;} .info-list{font-size:14px;color:var(--muted);margin: 1px 0 0 0;} .info-list li{margin: 1px 0;} footer{margin-top:42px;color:var(--muted);font-size:13px;text-align:center;padding:32px 0;border-top:1px solid #eee;}
+.language-selector{margin:10px 0;text-align:center;} .language-selector button{margin:0 6px;font-size:22px;padding:4px 8px;border:none;background:none;cursor:pointer;border-radius:4px;transition:all 0.2s ease;} .language-selector button.active{background:var(--link);color:white;} .language-selector button:hover{background:var(--link);color:white;opacity:0.8;}
+@media (max-width:880px){main{grid-template-columns:1fr;gap:48px;padding:32px 16px;}}
+
+/* Booking System Styles */
+input[type="text"], input[type="email"], input[type="tel"], input[type="date"], select {
+  width:100%; padding:12px; font-size:1em; margin:8px 0; border-radius:var(--radius);
+  border:1px solid #ddd; box-sizing:border-box; background:var(--card); color:var(--accent);
+}
+.input-error { border:2px solid #dc3545; }
+
+#wizard { background:var(--card); max-width:600px; margin:30px auto; padding:30px; border-radius:var(--radius); box-shadow:0 8px 32px rgba(0,0,0,0.1);}
+.step { display:none; }
+.step.active { display:block; }
+.step-header { font-weight:600; font-size:1.3em; margin-bottom:20px; color:var(--accent); font-family:'Cormorant Garamond', serif; }
+.summary-field { margin-bottom:12px; color:var(--accent); }
+
+.time-slot {
+  display:inline-block; margin:6px; padding:12px 16px; border-radius:10px;
+  border:1px solid var(--link); cursor:pointer; background:var(--bg); color:var(--link);
+  transition:all 0.2s ease; font-weight:500;
+}
+.time-slot.selected { background:var(--link); color:var(--bg); }
+.time-slot.disabled { background:#eee; color:#999; cursor:not-allowed; border-color:#ddd; }
+.time-slot:hover:not(.disabled) { background:var(--link); color:var(--bg); }
+
+.nav-buttons { display:flex; justify-content:space-between; margin-top:25px; }
+.nav-buttons button {
+  padding:12px 24px; border-radius:10px; border:1px solid var(--link);
+  background:var(--bg); color:var(--link); cursor:pointer; font-weight:500;
+  transition:all 0.2s ease;
+}
+.nav-buttons button:hover { background:var(--link); color:var(--bg); }
+
+#step1 button.selected { background:var(--link) !important; color:var(--bg) !important; }
+.option-btn {
+  margin:8px; padding:12px 20px; border:1px solid var(--link); background:var(--bg);
+  color:var(--link); border-radius:10px; cursor:pointer; font-weight:500; transition:all 0.2s ease;
+}
+.option-btn:hover, .option-btn.selected { background:var(--link); color:var(--bg); }
+
+.close-btn {
+  position:absolute; top:15px; right:15px; background:#dc3545; color:white; border:none;
+  border-radius:50%; width:35px; height:35px; font-size:1.2em; font-weight:bold;
+  display:flex; align-items:center; justify-content:center; cursor:pointer; transition:0.2s;
+}
+.close-btn:hover { background:#b02a37; }
+
+.floating-btn {
+  position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); z-index: 1100;
+  padding: 16px 28px; font-size: 1.1em; border: none; border-radius: var(--radius);
+  cursor: pointer; font-weight: 600; letter-spacing: 0.5px;
+
+  /* Elegant brown gradient matching the site theme */
+  background: linear-gradient(135deg, var(--link) 0%, #8b4513 50%, var(--link) 100%);
+  color: var(--bg); box-shadow: 0 6px 20px rgba(123, 63, 0, 0.3);
+  transition: all 0.3s ease; font-family: 'Cormorant Garamond', serif;
+}
+.floating-btn:hover {
+  transform: translateX(-50%) translateY(-3px); box-shadow: 0 8px 25px rgba(123, 63, 0, 0.4);
+}
+
+#wizardModal {
+  display:none; position:fixed; top:0; left:0; right:0; bottom:0;
+  background:rgba(31, 41, 55, 0.7); justify-content:center; align-items:center; z-index:1000;
+  backdrop-filter: blur(4px);
+}
+#wizardModal > div {
+  width:95%; max-width:650px; background:var(--card); border-radius:var(--radius);
+  padding:0; position:relative; box-shadow:0 20px 60px rgba(0,0,0,0.2);
+}
+
+</style>
+</head>
+<body>
+
+  <div class="language-selector">
+    <button class="language-btn" data-lang="en" onclick="switchLang('en')">🇬🇧</button>
+    <button class="language-btn active" data-lang="de" onclick="switchLang('de')">🇩🇪</button>
+    <button class="language-btn" data-lang="fr" onclick="switchLang('fr')">🇫🇷</button>
+  </div>
+
+  <main>
+    <div class="content">
+<div class="eyebrow lang" data-en="Private Piano Lessons" data-de="Private Klavierstunden" data-fr="Cours de piano privés">Private Klavierstunden</div>
+<h1 class="lang" data-en="Piano Lessons in Vienna - Classical and Pop Music" data-de="Klavierunterricht in Wien – Klassik und Popmusik" data-fr="Cours de piano à Vienne – Musique classique et pop">Klavierunterricht in Wien – Klassik und Popmusik</h1>
+<p class="lead lang" data-en="Would you or your child like to learn piano, start again, or deepen your skills? Is it your dream to play the music you love on the piano? Then book your first lesson today!" data-de="Sie oder Ihr Kind möchten das Klavierspielen lernen, wieder anfangen oder Ihre Fähigkeiten vertiefen? Ist es Ihr Traum, die Musik am Klavier zu spielen, die Sie lieben? Dann reservieren Sie sich noch heute einen Termin!" data-fr="Vous ou votre enfant souhaitez apprendre le piano, reprendre les cours ou approfondir vos compétences ? Rêvez‑vous de jouer au piano la musique que vous aimez ? Alors réservez dès aujourd’hui votre premier cours !">Sie oder Ihr Kind möchten das Klavierspielen lernen, wieder anfangen oder Ihre Fähigkeiten vertiefen? Ist es Ihr Traum, die Musik am Klavier zu spielen, die Sie lieben? Dann reservieren Sie sich noch heute einen Termin!</p>
+<section class="features"><div class="feature lang" data-en="30–90 minute lessons" data-de="30–90 Minuten Unterricht" data-fr="Cours de 30 à 90 minutes">30–90 Minuten Unterricht</div><div class="feature lang" data-en="In‑person or online" data-de="Vor Ort oder online" data-fr="En présentiel ou en ligne">Vor Ort oder online</div><div class="feature lang" data-en="Beginner‑friendly" data-de="Für Anfänger geeignet" data-fr="Convient aux débutants">Für Anfänger geeignet</div><div class="feature lang" data-en="Performance coaching" data-de="Performance Coaching" data-fr="Coaching de performance">Performance Coaching</div></section>
+<section><h2 class="lang" data-en="About the teacher" data-de="Über mich" data-fr="À propos de moi">Über mich</h2><p class="lang" data-en="My name is Diane, I’m 27 years old, and I’m from Munich. After finishing school, I moved to Vienna to study piano pedagogy at the MDW. In addition to my classical training, I work as a singer and pianist in my band. Alongside my teaching, I perform regularly at concerts. For me, the stage and teaching go hand in hand." data-de="Ich heiße Diane, bin 27 Jahre alt und komme aus München. Nach meinem Schulabschluss ging ich nach Wien und studierte Klavierpädagogik an der MDW. Zusätzlich zu meiner klassischen Ausbildung bin ich als Sängerin und Pianistin in meiner Band aktiv. Neben meiner pädagogischen Arbeit spiele ich regelmäßig auf Konzerten. Die Bühne und das Unterrichten gehören für mich untrennbar zusammen." data-fr="Je m’appelle Diane, j’ai 27 ans et je viens de Munich. Après mon baccalauréat, je me suis installée à Vienne pour étudier la pédagogie du piano à la MDW. En plus de ma formation classique, je suis chanteuse et pianiste au sein de mon groupe. Parallèlement à mon travail d’enseignante, je me produis régulièrement sur scène. Pour moi, la scène et l’enseignement sont indissociables.">Ich heiße Diane, bin 27 Jahre alt und komme aus München. Nach meinem Schulabschluss ging ich nach Wien und studierte Klavierpädagogik an der MDW. Zusätzlich zu meiner klassischen Ausbildung bin ich als Sängerin und Pianistin in meiner Band aktiv. Neben meiner pädagogischen Arbeit spiele ich regelmäßig auf Konzerten. Die Bühne und das Unterrichten gehören für mich untrennbar zusammen.</p><h3 class="lang" data-en="Piano Lessons with Joy and Individuality" data-de="Klavierunterricht mit Freude und Individualitä" data-fr="Des cours de piano avec joie et individualité">Klavierunterricht mit Freude und Individualitä</h3><p class="lang" data-en="My lessons are for children, teenagers, and adults, both beginners and advanced students. Whether you’re interested in classical music, pop, or other styles, I tailor my teaching to your preferences. Creativity is central to my approach, supported by improvisation and composition. I’m happy to help you prepare for competitions, exams, or auditions at music schools, and to organize a structured study plan. Everyone learns differently, so I adapt my methods and pace to your needs. My approach: learning without pressure, with patience, motivation, and open communication. This creates a relaxed atmosphere where progress comes naturally." data-de="Mein Unterricht richtet sich an Kinder, Jugendliche und Erwachsene, beginnend sowie fortgeschritten. Egal ob klassische Musik, Popmusik oder andere Musikstile; ich richte mich nach den Interessen meiner Schüler und Schülerinnen. Kreativität soll im Unterricht nicht zu kurz kommen und durch Improvisation und Kompositionen unterstützt werden. Die Vorbereitung auf Wettbewerbe, Prüfungen oder Aufnahmeprüfungen an weiterführenden Schulen unterstütze ich gerne und helfe dabei einen strukturierten Plan zu organisieren. Jeder Mensch lernt anders, deshalb gestalte ich den Unterricht individuell und passe Methoden und Tempo an die Bedürfnisse meiner Schülerinnen an. Mein Ansatz: Lernen ohne Druck, mit Geduld, Motivation und offener Kommunikation. Dadurch entsteht eine entspannte Atmosphäre, in der Fortschritte ganz natürlich wachsen können." data-fr="Mes cours s’adressent aux enfants, aux adolescents et aux adultes, débutants comme avancés. Que ce soit pour la musique classique, la pop ou d’autres styles, je m’adapte aux centres d’intérêt de mes élèves. La créativité occupe une place importante dans mon enseignement, encouragée par l’improvisation et la composition. Je vous accompagne avec plaisir dans la préparation aux concours, examens ou auditions pour les écoles supérieures, et vous aide à organiser un plan structuré. Chacun apprend différemment, c’est pourquoi j’adapte mes méthodes et le rythme à vos besoins. Ma philosophie : apprendre sans pression, avec patience, motivation et une communication ouverte. Ainsi se crée une atmosphère détendue où les progrès s’épanouissent naturellement.">Mein Unterricht richtet sich an Kinder, Jugendliche und Erwachsene, beginnend sowie fortgeschritten. Egal ob klassische Musik, Popmusik oder andere Musikstile; ich richte mich nach den Interessen meiner Schüler und Schülerinnen. Kreativität soll im Unterricht nicht zu kurz kommen und durch Improvisation und Kompositionen unterstützt werden. Die Vorbereitung auf Wettbewerbe, Prüfungen oder Aufnahmeprüfungen an weiterführenden Schulen unterstütze ich gerne und helfe dabei einen strukturierten Plan zu organisieren. Jeder Mensch lernt anders, deshalb gestalte ich den Unterricht individuell und passe Methoden und Tempo an die Bedürfnisse meiner Schülerinnen an. Mein Ansatz: Lernen ohne Druck, mit Geduld, Motivation und offener Kommunikation. Dadurch entsteht eine entspannte Atmosphäre, in der Fortschritte ganz natürlich wachsen können.</p><h3 class="lang" data-en="What We Can Explore Together" data-de="Inhalte, die wir gemeinsam entdecken können" data-fr="Ce que nous pouvons explorer ensemble">Inhalte, die wir gemeinsam entdecken können</h3>
+<ul class="lang" data-en="<li>Piano technique</li><li>Music theory</li><li>Ear training</li><li>Music history</li><li>Improvisation & composition</li><li>Performance training</li>" data-de="<li>Klaviertechnik</li><li>Musiktheorie</li><li>Gehörbildung</li><li>Musikgeschichte</li><li>Improvisation & Komposition</li><li>Auftrittstraining</li>" data-fr="<li>Technique pianistique</li><li>Théorie musicale</li><li>Formation de l’oreille</li><li>Histoire de la musique</li><li>Improvisation et composition</li><li>Préparation aux prestations scéniques</li>"><li>Klaviertechnik</li><li>Musiktheorie</li><li>Gehörbildung</li><li>Musikgeschichte</li><li>Improvisation & Komposition</li><li>Auftrittstraining</li></ul>
+<p class="lang" data-en="Whether for fun or with bigger goals, let me accompany you on your musical journey. I want
+to share my joy and enthusiasm for music, and provide a solid foundation of knowledge." data-de="Ob als Hobby oder mit größeren Zielen: lassen Sie mich Sie auf Ihrem Weg begleiten. Ich
+möchte Freude und Begeisterung für Musik weitergeben und fundiertes Wissen vermitteln." data-fr="Que ce soit par loisir ou avec des objectifs plus ambitieux, laissez-moi vous accompagner
+dans votre parcours. Mon but est de transmettre la joie et la passion de la musique, tout en
+partageant des connaissances solides.">Ob als Hobby oder mit größeren Zielen: lassen Sie mich Sie auf Ihrem Weg begleiten. Ich
+möchte Freude und Begeisterung für Musik weitergeben und fundiertes Wissen vermitteln.</p>
+</section>
+    </div>
+
+    <aside>
+      <div class="teacher card">
+        <img class="avatar" src="./image_diane.png" alt="Photo of the piano teacher">
+
+ <h3> Diane
+</h3> <p class="lang" data-en="" data-de="" data-fr="">  </p>
+      </div>
+
+
+      <div class="card">
+        <div> 
+
+          <h4 style="margin: 4 0 4px 0;font-size:15px; class="lang" data-en="Single Lesson" data-de="Einzelunterricht" data-fr="Cours individuels">Einzelunterricht</h4>
+          <ul class="info-list">
+            <li>€35 - 30 min.</li>
+            <li>€60 - 60 min.</li>
+          </ul>
+        </div>
+        <div class="divider"></div>
+        <div>
+
+          <h4 style="margin: 4 0 4px 0;font-size:15px; class="lang" data-en="Block Bookings" data-de="Blockbuchungen" data-fr="Cours en bloc">Blockbuchungen </h4>
+          <ul class="info-list">
+            <li>€300 - 10 × 30 min.</li>
+            <li>€500 - 10 × 60 min.</li>
+          </ul>
+        </div> 
+
+        <p class="lang" style="font-size:13px;color:var(--muted);margin-top:12px;" data-en="Trial lesson: 50% discount, a chance to get to know each other." data-de="Probestunde: 50% Rabatt, eine Chance, sich kennenzulernen." data-fr="Cours d'essai : 50% de réduction, une occasion de se connaître.">Probestunde: 50% Rabatt, eine Chance, sich kennenzulernen. 
+        </p>
+        <div class="divider"></div>
+
+ <div>
+          <h4 style="margin: 4 0 4px 0;font-size:15px; class="lang" data-en="Location" data-de="Ort" data-fr="Lieu">Ort</h4>
+          <ul class="info-list">
+            <li class="lang" data-en="Vienna·&·surrounding" data-de="Wien·und·Umgebung" data-fr="Vienne·et·environs">Wien·und·Umgebung </li>
+            <li class="lang" data-en="Online" data-de="Online" data-fr="En ligne">Online </li>
+            <li class="lang" data-en="Student's place" data-de="Beim Schüler" data-fr="Chez l’élève">Beim Schüler </li>
+            <li class="lang" data-en="Teacher's place" data-de="Beim Lehrer" data-fr="Chez le professeur">Beim Lehrer </li>
+          </ul>
+        </div>
+        <div class="divider"></div> 
+
+      <div class="card">
+        <h4 style="margin:0 0 4px 0;font-size:15px"; class="lang" data-en="Shedule & Booking" data-de="Termin vereinbarung" data-fr="Prendre rendez-vous">Termin vereinbarung</h4>
+        <p style="margin:0;color:var(--muted);font-size:14px"; class="lang" data-en="Flexibel weekday afternoons and some weekends. To book, mail or call:" data-de="Erreichbar unter der Woche und manchen Wochenenden, schreiben Sie mir ein Mail oder rufen an: " data-fr="Disponible en semaine et certains week-ends, écrivez-moi un mail ou appelez-moi">Erreichbar unter der Woche und manchen Wochenenden, schreiben Sie mir ein Mail oder rufen an: </p> 
+
+        <p style="margin:4px 0 8px 0;font-weight:600">+420 6969 TODO</p>
+
+        <p style="margin:4px 0 8px 0;font-weight:600"><a href="mailto: diane@TODO.mail">diane@TODO.mail</a></p>
+      </div>
+    </aside>
+
+  <!-- Floating Booking Button -->
+  <button class="floating-btn lang" onclick="openBooking()"
+          data-en="Book a Piano Lesson"
+          data-de="Klavierstunde buchen"
+          data-fr="Réserver un cours de piano">Klavierstunde buchen</button>
+
+  <!-- Booking Modal -->
+  <div id="wizardModal">
+    <div>
+      <button class="close-btn" onclick="closeBooking()">×</button>
+
+      <div id="wizard">
+        <div id="stepIndicator" class="lang" style="margin-bottom:15px;font-weight:bold;" data-en="Step 1 of 4" data-de="Schritt 1 von 4" data-fr="Étape 1 sur 4">Schritt 1 von 4</div>
+
+        <!-- Step 1: Duration & Lesson Type -->
+        <div class="step active" id="step1">
+          <div class="step-header lang" data-en="Select Duration" data-de="Dauer wählen" data-fr="Sélectionner la durée">Dauer wählen</div>
+          <button class="option-btn lang" data-duration onclick="selectDuration(30, this)" data-en="30 min" data-de="30 Min" data-fr="30 min">30 Min</button>
+          <button class="option-btn lang" data-duration onclick="selectDuration(60, this)" data-en="1 hour" data-de="1 Stunde" data-fr="1 heure">1 Stunde</button>
+
+          <div class="step-header lang" style="margin-top:20px;" data-en="Select Lesson Type" data-de="Unterrichtsart wählen" data-fr="Sélectionner le type de cours">Unterrichtsart wählen</div>
+          <button class="option-btn lang" data-type onclick="selectType('Student Location', this)" data-en="At Student's Location" data-de="Beim Schüler" data-fr="Chez l'élève">Beim Schüler</button>
+          <button class="option-btn lang" data-type onclick="selectType('Online', this)" data-en="Online" data-de="Online" data-fr="En ligne">Online</button>
+          <button class="option-btn lang" data-type onclick="selectType('Teacher Location', this)" data-en="At Teacher's Location" data-de="Beim Lehrer" data-fr="Chez le professeur">Beim Lehrer</button>
+
+          <div class="nav-buttons">
+            <div></div>
+            <button class="lang" onclick="nextStep()" id="step1Next" data-en="Next ▶" data-de="Weiter ▶" data-fr="Suivant ▶">Weiter ▶</button>
+          </div>
+        </div>
+
+        <!-- Step 2: Date & Time -->
+        <div class="step" id="step2">
+          <div class="step-header lang" data-en="Select Date" data-de="Datum wählen" data-fr="Sélectionner la date">Datum wählen</div>
+          <input type="date" id="selectedDate" min="" onchange="fetchTimeSlots()">
+
+          <div class="step-header lang" style="margin-top:15px;" data-en="Select Time Slot" data-de="Zeitslot wählen" data-fr="Sélectionner le créneau">Zeitslot wählen</div>
+          <div id="timeSlots"></div>
+
+          <div class="nav-buttons">
+            <button class="lang" onclick="prevStep()" data-en="◀ Back" data-de="◀ Zurück" data-fr="◀ Retour">◀ Zurück</button>
+            <button class="lang" onclick="nextStep()" data-en="Next ▶" data-de="Weiter ▶" data-fr="Suivant ▶">Weiter ▶</button>
+          </div>
+        </div>
+
+        <!-- Step 3: Contact Details -->
+        <div class="step" id="step3">
+          <div class="step-header lang" data-en="Your Contact Information" data-de="Ihre Kontaktdaten" data-fr="Vos informations de contact">Ihre Kontaktdaten</div>
+          <input type="text" id="name" class="lang" placeholder="Vollständiger Name" data-en="Full Name" data-de="Vollständiger Name" data-fr="Nom complet">
+          <input type="email" id="email" class="lang" placeholder="E-Mail" data-en="Email" data-de="E-Mail" data-fr="E-mail">
+          <input type="tel" id="phone" class="lang" placeholder="Telefonnummer" data-en="Phone Number" data-de="Telefonnummer" data-fr="Numéro de téléphone">
+
+          <div class="nav-buttons">
+            <button class="lang" onclick="prevStep()" data-en="◀ Back" data-de="◀ Zurück" data-fr="◀ Retour">◀ Zurück</button>
+            <button class="lang" onclick="nextStep()" data-en="Next ▶" data-de="Weiter ▶" data-fr="Suivant ▶">Weiter ▶</button>
+          </div>
+        </div>
+
+        <!-- Step 4: Summary & Confirmation -->
+        <div class="step" id="step4">
+          <div class="step-header lang" data-en="Summary" data-de="Zusammenfassung" data-fr="Résumé">Zusammenfassung</div>
+          <div id="summary"></div>
+
+          <div class="nav-buttons">
+            <button class="lang" onclick="prevStep()" data-en="◀ Back" data-de="◀ Zurück" data-fr="◀ Retour">◀ Zurück</button>
+            <button class="lang" onclick="confirmAppointment()" data-en="Confirm & Book" data-de="Bestätigen & Buchen" data-fr="Confirmer & Réserver">Bestätigen & Buchen</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    © <span id="year"></span> <p class="lang" data-en="Diane, Piano Lessons" data-de="Diane, Klavierunterricht" data-fr="Diane, Cours de piano"> Diane, Klavierunterricht </p>
+  </footer>
+
+
+  <script>
+    // Booking System JavaScript
+    let currentStep  = 1;
+    let duration     = null;
+    let lessonType   = null;
+    let selectedDate = null;
+    let selectedTime = null;
+    let name = '', email = '', phone = '';
+
+    function resetWizard(){
+        currentStep  = 1;
+        duration     = null;
+        lessonType   = null;
+        selectedDate = null;
+        selectedTime = null;
+        name         = '';
+        email        = '';
+        phone        = '';
+
+        // clear input fields
+        document.getElementById('name').value = '';
+        document.getElementById('email').value = '';
+        document.getElementById('phone').value = '';
+        document.getElementById('selectedDate').value = '';
+        document.getElementById('timeSlots').innerHTML = '';
+        document.getElementById('summary').innerHTML = '';
+
+        // clear button selections
+        document.querySelectorAll('#step1 button').forEach(b=>{
+            b.classList.remove('selected');
+        });
+        document.querySelectorAll('.time-slot').forEach(b=>{
+            b.classList.remove('selected');
+        });
+
+        // reset back to Step 1
+        showStep(1);
+    }
+
+    function openBooking(){
+        document.getElementById('wizardModal').style.display='flex';
+        resetWizard();
+    }
+    function closeBooking(){
+        document.getElementById('wizardModal').style.display='none';
+        resetWizard();
+    }
+
+    function showStep(step){
+        document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));
+        document.getElementById('step'+step).classList.add('active');
+        // Update step indicator with current language
+        const stepIndicator = document.getElementById('stepIndicator');
+        const currentLang = getCurrentLanguage();
+        const stepTexts = {
+            'en': `Step ${step} of 4`,
+            'de': `Schritt ${step} von 4`,
+            'fr': `Étape ${step} sur 4`
+        };
+        stepIndicator.textContent = stepTexts[currentLang];
+
+        // If showing step 2 and we have a selected date, fetch time slots
+        if(step === 2) {
+            const dateValue = document.getElementById('selectedDate').value;
+            if(dateValue) {
+                fetchTimeSlots();
+            }
+        }
+    }
+
+    function nextStep(){
+        if(currentStep === 1){
+            if(!duration || !lessonType){
+                const currentLang = getCurrentLanguage();
+                const messages = {
+                    'en': 'Please select duration and lesson type',
+                    'de': 'Bitte wählen Sie Dauer und Unterrichtsart',
+                    'fr': 'Veuillez sélectionner la durée et le type de cours'
+                };
+                alert(messages[currentLang]);
+                return;
+            }
+        }
+        if(currentStep===2){
+            if(!selectedDate){
+                const currentLang = getCurrentLanguage();
+                const messages = {
+                    'en': 'Please select a date',
+                    'de': 'Bitte wählen Sie ein Datum',
+                    'fr': 'Veuillez sélectionner une date'
+                };
+                alert(messages[currentLang]);
+                return;
+            }
+            if(!selectedTime){
+                const currentLang = getCurrentLanguage();
+                const messages = {
+                    'en': 'Please select a time slot',
+                    'de': 'Bitte wählen Sie einen Zeitslot',
+                    'fr': 'Veuillez sélectionner un créneau'
+                };
+                alert(messages[currentLang]);
+                return;
+            }
+        }
+        if(currentStep===3){
+            name = document.getElementById('name').value.trim();
+            email = document.getElementById('email').value.trim();
+            phone = document.getElementById('phone').value.trim();
+            if(!name || (!email && !phone)){
+                const currentLang = getCurrentLanguage();
+                const messages = {
+                    'en': 'Please provide your name and at least one contact method',
+                    'de': 'Bitte geben Sie Ihren Namen und mindestens eine Kontaktmöglichkeit an',
+                    'fr': 'Veuillez fournir votre nom et au moins un moyen de contact'
+                };
+                alert(messages[currentLang]);
+                return;
+            }
+        }
+        if(currentStep<4) currentStep++;
+        if(currentStep===4) renderSummary();
+        showStep(currentStep);
+    }
+
+    function prevStep(){ if(currentStep>1){ currentStep--; showStep(currentStep); } }
+
+    function selectDuration(d, btn){
+        duration = d;
+        document.querySelectorAll('#step1 button[data-duration]').forEach(b=>{
+            b.classList.remove('selected');
+        });
+        btn.classList.add('selected');
+    }
+
+    function selectType(t, btn){
+        lessonType = t;
+        document.querySelectorAll('#step1 button[data-type]').forEach(b=>{
+            b.classList.remove('selected');
+        });
+        btn.classList.add('selected');
+    }
+
+    function timeToMinutes(t) {
+        const [h, m] = t.split(':').map(Number);
+        return h * 60 + m;
+    }
+
+    async function fetchTimeSlots() {
+        const container = document.getElementById('timeSlots');
+        selectedDate = document.getElementById('selectedDate').value;
+        selectedTime = null;
+        container.innerHTML = '';
+
+        if(!selectedDate || !duration) {
+            const currentLang = getCurrentLanguage();
+            const messages = {
+                'en': 'Missing date or duration. Please select both.',
+                'de': 'Datum oder Dauer fehlt. Bitte beides auswählen.',
+                'fr': 'Date ou durée manquante. Veuillez sélectionner les deux.'
+            };
+            container.innerHTML = messages[currentLang];
+            return;
+        }
+
+        if(!lessonType) {
+            const currentLang = getCurrentLanguage();
+            const messages = {
+                'en': 'Please select lesson type first.',
+                'de': 'Bitte wählen Sie zuerst die Unterrichtsart.',
+                'fr': 'Veuillez d\'abord sélectionner le type de cours.'
+            };
+            container.innerHTML = messages[currentLang];
+            return;
+        }
+
+        try {
+            const url = `/appointments?date=${selectedDate}&d=${duration}&type=${encodeURIComponent(lessonType)}`;
+            const resp = await fetch(url);
+
+            if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+
+            const data = await resp.json();
+            const slots = data.available || [];
+
+            slots.forEach(timeStr => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'time-slot';
+                btn.innerText = timeStr;
+
+                btn.onclick = () => {
+                    document.querySelectorAll('.time-slot')
+                        .forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                    selectedTime = timeStr;
+                    selectedDate = document.getElementById('selectedDate').value;
+                };
+
+                container.appendChild(btn);
+            });
+
+            if (slots.length === 0) {
+                const currentLang = getCurrentLanguage();
+                const messages = {
+                    'en': 'No available slots for the chosen duration.',
+                    'de': 'Keine verfügbaren Slots für die gewählte Dauer.',
+                    'fr': 'Aucun créneau disponible pour la durée choisie.'
+                };
+                container.textContent = messages[currentLang];
+            }
+        } catch (err) {
+            console.error('Error fetching slots:', err);
+            container.innerHTML = `
+                <div style="color: red; padding: 10px;">
+                    Failed to load time slots. <br>
+                    Error: ${err.message}<br>
+                    Duration: ${duration}<br>
+                    Lesson Type: ${lessonType}<br>
+                    Date: ${selectedDate}
+                </div>
+            `;
+        }
+    }
+
+    function getCurrentLanguage() {
+        // Get current language from the active language button
+        const activeBtn = document.querySelector('.language-btn.active');
+        return activeBtn ? activeBtn.getAttribute('data-lang') : 'de';
+    }
+
+    function updateBookingPlaceholders() {
+        // Update placeholders for input fields when language changes
+        const currentLang = getCurrentLanguage();
+
+        const nameInput = document.getElementById('name');
+        const emailInput = document.getElementById('email');
+        const phoneInput = document.getElementById('phone');
+
+        if (nameInput && nameInput.hasAttribute(`data-${currentLang}`)) {
+            nameInput.placeholder = nameInput.getAttribute(`data-${currentLang}`);
+        }
+        if (emailInput && emailInput.hasAttribute(`data-${currentLang}`)) {
+            emailInput.placeholder = emailInput.getAttribute(`data-${currentLang}`);
+        }
+        if (phoneInput && phoneInput.hasAttribute(`data-${currentLang}`)) {
+            phoneInput.placeholder = phoneInput.getAttribute(`data-${currentLang}`);
+        }
+    }
+
+    function renderSummary(){
+        const summary = document.getElementById('summary');
+        const currentLang = getCurrentLanguage();
+
+        const labels = {
+            'en': {
+                duration: 'Duration',
+                lessonType: 'Lesson Type',
+                date: 'Date',
+                time: 'Time',
+                name: 'Name',
+                email: 'Email',
+                phone: 'Phone'
+            },
+            'de': {
+                duration: 'Dauer',
+                lessonType: 'Unterrichtsart',
+                date: 'Datum',
+                time: 'Zeit',
+                name: 'Name',
+                email: 'E-Mail',
+                phone: 'Telefon'
+            },
+            'fr': {
+                duration: 'Durée',
+                lessonType: 'Type de cours',
+                date: 'Date',
+                time: 'Heure',
+                name: 'Nom',
+                email: 'E-mail',
+                phone: 'Téléphone'
+            }
+        };
+
+        const l = labels[currentLang];
+        summary.innerHTML = `
+    <div class="summary-field"><strong>${l.duration}:</strong> ${duration} ${currentLang === 'en' ? 'minutes' : currentLang === 'de' ? 'Minuten' : 'minutes'}</div>
+    <div class="summary-field"><strong>${l.lessonType}:</strong> ${lessonType}</div>
+    <div class="summary-field"><strong>${l.date}:</strong> ${selectedDate}</div>
+    <div class="summary-field"><strong>${l.time}:</strong> ${selectedTime}</div>
+    <div class="summary-field"><strong>${l.name}:</strong> ${name}</div>
+    <div class="summary-field"><strong>${l.email}:</strong> ${email}</div>
+    <div class="summary-field"><strong>${l.phone}:</strong> ${phone}</div>
+    `;
+    }
+
+    async function confirmAppointment(){
+        if(!selectedDate || !selectedTime){
+            const currentLang = getCurrentLanguage();
+            const messages = {
+                'en': 'Error: Please select a day and time before submitting',
+                'de': 'Fehler: Bitte wählen Sie Tag und Zeit vor der Buchung',
+                'fr': 'Erreur: Veuillez sélectionner le jour et l\'heure avant de soumettre'
+            };
+            alert(messages[currentLang]);
+            return;
+        }
+        try{
+            const res = await fetch('/submit_appointment',{
+                method:'POST',
+                headers:{'Content-Type':'application/json'},
+                body: JSON.stringify({name,email,phone,duration,lesson_type:lessonType,date:selectedDate,time:selectedTime})
+            });
+            const result = await res.json();
+            const currentLang = getCurrentLanguage();
+            if(res.ok){
+                const successMessages = {
+                    'en': 'Appointment booked successfully!',
+                    'de': 'Termin erfolgreich gebucht!',
+                    'fr': 'Rendez-vous réservé avec succès!'
+                };
+                alert(successMessages[currentLang]);
+                location.reload();
+            } else {
+                const errorMessages = {
+                    'en': 'Error: ',
+                    'de': 'Fehler: ',
+                    'fr': 'Erreur: '
+                };
+                alert(errorMessages[currentLang] + JSON.stringify(result.errors));
+            }
+        } catch(e){
+            console.error("Failed to submit appointment:", e);
+            const currentLang = getCurrentLanguage();
+            const errorMessages = {
+                'en': 'Error submitting appointment. Please try again.',
+                'de': 'Fehler beim Buchen des Termins. Bitte versuchen Sie es erneut.',
+                'fr': 'Erreur lors de la soumission du rendez-vous. Veuillez réessayer.'
+            };
+            alert(errorMessages[currentLang]);
+        }
+    }
+
+    // Initialize booking system on page load
+    document.addEventListener("DOMContentLoaded", function() {
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('selectedDate').setAttribute('min', today);
+    });
+
+    // Language switcher function
+    function switchLang(lang) {
+        // Update active button state
+        document.querySelectorAll('.language-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        document.querySelector(`.language-btn[data-lang="${lang}"]`).classList.add('active');
+
+        // Update all multilingual elements
+        const elements = document.querySelectorAll('.lang');
+        elements.forEach(el => {
+            if (el.dataset[lang]) {
+                // Handle special elements
+                if (el.tagName.toLowerCase() === 'ul') {
+                    el.innerHTML = el.dataset[lang];
+                } else if (el.tagName.toLowerCase() === 'input' && el.hasAttribute('placeholder')) {
+                    // Update placeholder for input elements
+                    el.placeholder = el.dataset[lang];
+                } else {
+                    el.textContent = el.dataset[lang];
+                }
+            }
+        });
+
+        // Update booking system dynamic content if booking modal is open
+        const wizardModal = document.getElementById('wizardModal');
+        if (wizardModal && wizardModal.style.display === 'flex') {
+            // Update step indicator if currently showing
+            const stepIndicator = document.getElementById('stepIndicator');
+            if (stepIndicator) {
+                const currentStepMatch = stepIndicator.textContent.match(/\d+/);
+                if (currentStepMatch) {
+                    const currentStepNum = currentStepMatch[0];
+                    const stepTexts = {
+                        'en': `Step ${currentStepNum} of 4`,
+                        'de': `Schritt ${currentStepNum} von 4`,
+                        'fr': `Étape ${currentStepNum} sur 4`
+                    };
+                    stepIndicator.textContent = stepTexts[lang];
+                }
+            }
+
+            // Re-render summary if we're on step 4
+            if (currentStep === 4) {
+                renderSummary();
+            }
+        }
+    }
+    // Insert current year
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
