@@ -12,12 +12,118 @@
 *{box-sizing:border-box} html,body{margin:0;padding:0} body{font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; background:linear-gradient(180deg,var(--bg),#fffdf9); color:var(--accent); -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; line-height:1.6;}
 main{padding:48px 20px; max-width:1000px; margin:0 auto; display:grid; grid-template-columns:2fr 1fr; gap:32px; justify-content:center;}
 a{color:var(--link); text-decoration:none;} a:hover{text-decoration:underline;}
-.content section{margin-bottom:48px;} header .eyebrow{display:inline-block;font-weight:600;font-family:'Cormorant Garamond', serif;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;font-size:12px;margin-bottom:10px;} h1{margin:6px 0 16px 0;font-family:'Cormorant Garamond', serif;font-size:38px;font-weight:600;color:var(--accent);} p.lead{margin:0 0 24px 0;color:var(--muted);font-size:18px;max-width:70ch;}
-.features{display:flex;gap:14px;margin-top:18px;flex-wrap:wrap;} .feature{background:var(--glass);border-radius:10px;padding:12px 14px;font-size:14px;color:var(--accent);box-shadow:inset 0 -1px 0 rgba(0,0,0,0.02);}
+.content section{margin-bottom:48px;}
+header .eyebrow{display:inline-block;font-weight:600;font-family:'Cormorant Garamond', serif;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;font-size:12px;margin-bottom:10px;}
+h1{margin:6px 0 16px 0;font-family:'Cormorant Garamond', serif;font-size:38px;font-weight:600;color:var(--accent);}
+p.lead{margin:0 0 24px 0;color:var(--muted);font-size:18px;max-width:70ch;}
+
+/* Consistent Section Headings */
+h2, h3.section-heading{
+  font-family:'Cormorant Garamond', serif;
+  font-size:28px;
+  font-weight:600;
+  color:var(--accent);
+  margin:48px 0 24px 0;
+}
+h2:first-of-type, h3.section-heading:first-of-type{
+  margin-top:24px;
+}
+h3:not(.section-heading){
+  font-family:'Cormorant Garamond', serif;
+  font-size:22px;
+  font-weight:600;
+  color:var(--link);
+  margin:32px 0 16px 0;
+}
+/* Features Section - Enhanced Cards */
+.features{
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));
+  gap:20px;
+  margin:32px 0 48px 0;
+}
+.feature{
+  background:linear-gradient(135deg, var(--card) 0%, rgba(255,250,245,0.95) 100%);
+  border-radius:12px;
+  padding:20px;
+  font-size:16px;
+  color:var(--accent);
+  box-shadow:0 4px 12px rgba(123,63,0,0.08);
+  border:1px solid rgba(123,63,0,0.1);
+  transition:all 0.3s ease;
+  text-align:center;
+  font-weight:500;
+}
+.feature:hover{
+  transform:translateY(-2px);
+  box-shadow:0 8px 20px rgba(123,63,0,0.15);
+  border-color:rgba(123,63,0,0.2);
+}
+.feature::before{
+  content:'🎹';
+  display:block;
+  font-size:24px;
+  margin-bottom:8px;
+}
+.feature:nth-child(1)::before{content:'⏱️';}
+.feature:nth-child(2)::before{content:'🌐';}
+.feature:nth-child(3)::before{content:'🌟';}
+.feature:nth-child(4)::before{content:'🎭';}
+
+/* Exploration Cards */
+.exploration-cards{
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));
+  gap:20px;
+  margin:24px 0;
+}
+.exploration-card{
+  background:linear-gradient(135deg, var(--bg) 0%, var(--card) 100%);
+  border-radius:12px;
+  padding:20px;
+  box-shadow:0 4px 12px rgba(123,63,0,0.08);
+  border:1px solid rgba(123,63,0,0.1);
+  transition:all 0.3s ease;
+}
+.exploration-card:hover{
+  transform:translateY(-2px);
+  box-shadow:0 8px 20px rgba(123,63,0,0.15);
+}
+.exploration-card h4{
+  margin:0 0 12px 0;
+  color:var(--link);
+  font-size:18px;
+  font-weight:600;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.exploration-card p{
+  margin:0;
+  color:var(--muted);
+  font-size:14px;
+  line-height:1.5;
+}
 aside{display:flex;flex-direction:column;gap:24px;} .teacher{text-align:center;} .avatar{width:240px;height:240px;border-radius:50%;object-fit:cover;box-shadow:0 4px 14px rgba(20,20,30,0.06);margin-bottom:12px;} .teacher h3{margin:0;font-size:18px;} .teacher p{margin:6px 0 0 0;color:var(--muted);font-size:14px;}
 .card{background:var(--card);padding:16px;border-radius:12px;box-shadow:0 6px 16px rgba(20,20,30,0.04);} .price{font-size:20px;font-weight:600;color:var(--accent);} .divider{height:1px;background:linear-gradient(90deg,transparent,#eee,transparent);margin: 4px 0;} .info-list{font-size:14px;color:var(--muted);margin: 1px 0 0 0;} .info-list li{margin: 1px 0;} footer{margin-top:42px;color:var(--muted);font-size:13px;text-align:center;padding:32px 0;border-top:1px solid #eee;}
 .language-selector{margin:10px 0;text-align:center;} .language-selector button{margin:0 6px;font-size:22px;padding:4px 8px;border:none;background:none;cursor:pointer;border-radius:4px;transition:all 0.2s ease;} .language-selector button.active{background:var(--link);color:white;} .language-selector button:hover{background:var(--link);color:white;opacity:0.8;}
-@media (max-width:880px){main{grid-template-columns:1fr;gap:48px;padding:32px 16px;}}
+/* Responsive Design */
+@media (max-width:880px){
+  main{grid-template-columns:1fr;gap:48px;padding:32px 16px;}
+  .features{grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));}
+  .exploration-cards{grid-template-columns:1fr;}
+  h1{font-size:32px;}
+  h2, h3.section-heading{font-size:24px;}
+}
+
+@media (max-width:600px){
+  .features{grid-template-columns:1fr;}
+  .feature{padding:16px;}
+  .exploration-card{padding:16px;}
+  h1{font-size:28px;}
+  h2, h3.section-heading{font-size:22px;}
+  main{padding:24px 12px;}
+}
 
 /* Booking System Styles */
 input[type="text"], input[type="email"], input[type="tel"], input[type="date"], select {
@@ -103,8 +209,38 @@ input[type="text"], input[type="email"], input[type="tel"], input[type="date"], 
 <h1 class="lang" data-en="Piano Lessons in Vienna - Classical and Pop Music" data-de="Klavierunterricht in Wien – Klassik und Popmusik" data-fr="Cours de piano à Vienne – Musique classique et pop">Klavierunterricht in Wien – Klassik und Popmusik</h1>
 <p class="lead lang" data-en="Would you or your child like to learn piano, start again, or deepen your skills? Is it your dream to play the music you love on the piano? Then book your first lesson today!" data-de="Sie oder Ihr Kind möchten das Klavierspielen lernen, wieder anfangen oder Ihre Fähigkeiten vertiefen? Ist es Ihr Traum, die Musik am Klavier zu spielen, die Sie lieben? Dann reservieren Sie sich noch heute einen Termin!" data-fr="Vous ou votre enfant souhaitez apprendre le piano, reprendre les cours ou approfondir vos compétences ? Rêvez‑vous de jouer au piano la musique que vous aimez ? Alors réservez dès aujourd’hui votre premier cours !">Sie oder Ihr Kind möchten das Klavierspielen lernen, wieder anfangen oder Ihre Fähigkeiten vertiefen? Ist es Ihr Traum, die Musik am Klavier zu spielen, die Sie lieben? Dann reservieren Sie sich noch heute einen Termin!</p>
 <section class="features"><div class="feature lang" data-en="30–90 minute lessons" data-de="30–90 Minuten Unterricht" data-fr="Cours de 30 à 90 minutes">30–90 Minuten Unterricht</div><div class="feature lang" data-en="In‑person or online" data-de="Vor Ort oder online" data-fr="En présentiel ou en ligne">Vor Ort oder online</div><div class="feature lang" data-en="Beginner‑friendly" data-de="Für Anfänger geeignet" data-fr="Convient aux débutants">Für Anfänger geeignet</div><div class="feature lang" data-en="Performance coaching" data-de="Performance Coaching" data-fr="Coaching de performance">Performance Coaching</div></section>
-<section><h2 class="lang" data-en="About the teacher" data-de="Über mich" data-fr="À propos de moi">Über mich</h2><p class="lang" data-en="My name is Diane, I’m 27 years old, and I’m from Munich. After finishing school, I moved to Vienna to study piano pedagogy at the MDW. In addition to my classical training, I work as a singer and pianist in my band. Alongside my teaching, I perform regularly at concerts. For me, the stage and teaching go hand in hand." data-de="Ich heiße Diane, bin 27 Jahre alt und komme aus München. Nach meinem Schulabschluss ging ich nach Wien und studierte Klavierpädagogik an der MDW. Zusätzlich zu meiner klassischen Ausbildung bin ich als Sängerin und Pianistin in meiner Band aktiv. Neben meiner pädagogischen Arbeit spiele ich regelmäßig auf Konzerten. Die Bühne und das Unterrichten gehören für mich untrennbar zusammen." data-fr="Je m’appelle Diane, j’ai 27 ans et je viens de Munich. Après mon baccalauréat, je me suis installée à Vienne pour étudier la pédagogie du piano à la MDW. En plus de ma formation classique, je suis chanteuse et pianiste au sein de mon groupe. Parallèlement à mon travail d’enseignante, je me produis régulièrement sur scène. Pour moi, la scène et l’enseignement sont indissociables.">Ich heiße Diane, bin 27 Jahre alt und komme aus München. Nach meinem Schulabschluss ging ich nach Wien und studierte Klavierpädagogik an der MDW. Zusätzlich zu meiner klassischen Ausbildung bin ich als Sängerin und Pianistin in meiner Band aktiv. Neben meiner pädagogischen Arbeit spiele ich regelmäßig auf Konzerten. Die Bühne und das Unterrichten gehören für mich untrennbar zusammen.</p><h3 class="lang" data-en="Piano Lessons with Joy and Individuality" data-de="Klavierunterricht mit Freude und Individualitä" data-fr="Des cours de piano avec joie et individualité">Klavierunterricht mit Freude und Individualitä</h3><p class="lang" data-en="My lessons are for children, teenagers, and adults, both beginners and advanced students. Whether you’re interested in classical music, pop, or other styles, I tailor my teaching to your preferences. Creativity is central to my approach, supported by improvisation and composition. I’m happy to help you prepare for competitions, exams, or auditions at music schools, and to organize a structured study plan. Everyone learns differently, so I adapt my methods and pace to your needs. My approach: learning without pressure, with patience, motivation, and open communication. This creates a relaxed atmosphere where progress comes naturally." data-de="Mein Unterricht richtet sich an Kinder, Jugendliche und Erwachsene, beginnend sowie fortgeschritten. Egal ob klassische Musik, Popmusik oder andere Musikstile; ich richte mich nach den Interessen meiner Schüler und Schülerinnen. Kreativität soll im Unterricht nicht zu kurz kommen und durch Improvisation und Kompositionen unterstützt werden. Die Vorbereitung auf Wettbewerbe, Prüfungen oder Aufnahmeprüfungen an weiterführenden Schulen unterstütze ich gerne und helfe dabei einen strukturierten Plan zu organisieren. Jeder Mensch lernt anders, deshalb gestalte ich den Unterricht individuell und passe Methoden und Tempo an die Bedürfnisse meiner Schülerinnen an. Mein Ansatz: Lernen ohne Druck, mit Geduld, Motivation und offener Kommunikation. Dadurch entsteht eine entspannte Atmosphäre, in der Fortschritte ganz natürlich wachsen können." data-fr="Mes cours s’adressent aux enfants, aux adolescents et aux adultes, débutants comme avancés. Que ce soit pour la musique classique, la pop ou d’autres styles, je m’adapte aux centres d’intérêt de mes élèves. La créativité occupe une place importante dans mon enseignement, encouragée par l’improvisation et la composition. Je vous accompagne avec plaisir dans la préparation aux concours, examens ou auditions pour les écoles supérieures, et vous aide à organiser un plan structuré. Chacun apprend différemment, c’est pourquoi j’adapte mes méthodes et le rythme à vos besoins. Ma philosophie : apprendre sans pression, avec patience, motivation et une communication ouverte. Ainsi se crée une atmosphère détendue où les progrès s’épanouissent naturellement.">Mein Unterricht richtet sich an Kinder, Jugendliche und Erwachsene, beginnend sowie fortgeschritten. Egal ob klassische Musik, Popmusik oder andere Musikstile; ich richte mich nach den Interessen meiner Schüler und Schülerinnen. Kreativität soll im Unterricht nicht zu kurz kommen und durch Improvisation und Kompositionen unterstützt werden. Die Vorbereitung auf Wettbewerbe, Prüfungen oder Aufnahmeprüfungen an weiterführenden Schulen unterstütze ich gerne und helfe dabei einen strukturierten Plan zu organisieren. Jeder Mensch lernt anders, deshalb gestalte ich den Unterricht individuell und passe Methoden und Tempo an die Bedürfnisse meiner Schülerinnen an. Mein Ansatz: Lernen ohne Druck, mit Geduld, Motivation und offener Kommunikation. Dadurch entsteht eine entspannte Atmosphäre, in der Fortschritte ganz natürlich wachsen können.</p><h3 class="lang" data-en="What We Can Explore Together" data-de="Inhalte, die wir gemeinsam entdecken können" data-fr="Ce que nous pouvons explorer ensemble">Inhalte, die wir gemeinsam entdecken können</h3>
-<ul class="lang" data-en="<li>Piano technique</li><li>Music theory</li><li>Ear training</li><li>Music history</li><li>Improvisation & composition</li><li>Performance training</li>" data-de="<li>Klaviertechnik</li><li>Musiktheorie</li><li>Gehörbildung</li><li>Musikgeschichte</li><li>Improvisation & Komposition</li><li>Auftrittstraining</li>" data-fr="<li>Technique pianistique</li><li>Théorie musicale</li><li>Formation de l’oreille</li><li>Histoire de la musique</li><li>Improvisation et composition</li><li>Préparation aux prestations scéniques</li>"><li>Klaviertechnik</li><li>Musiktheorie</li><li>Gehörbildung</li><li>Musikgeschichte</li><li>Improvisation & Komposition</li><li>Auftrittstraining</li></ul>
+<!-- What We Can Explore - Moved up and redesigned as cards -->
+<section>
+<h2 class="section-heading lang" data-en="What We Can Explore Together" data-de="Inhalte, die wir gemeinsam entdecken können" data-fr="Ce que nous pouvons explorer ensemble">Inhalte, die wir gemeinsam entdecken können</h2>
+<div class="exploration-cards">
+  <div class="exploration-card">
+    <h4><span>🎹</span><span class="lang" data-en="Piano Technique" data-de="Klaviertechnik" data-fr="Technique pianistique">Klaviertechnik</span></h4>
+    <p class="lang" data-en="Master proper hand position, scales, arpeggios, and develop finger independence for expressive playing." data-de="Erlernen Sie die richtige Handhaltung, Tonleitern, Arpeggien und entwickeln Sie Fingerunabhängigkeit für ausdrucksvolles Spiel." data-fr="Maîtrisez la position des mains, les gammes, les arpèges et développez l'indépendance des doigts pour un jeu expressif.">Erlernen Sie die richtige Handhaltung, Tonleitern, Arpeggien und entwickeln Sie Fingerunabhängigkeit für ausdrucksvolles Spiel.</p>
+  </div>
+  <div class="exploration-card">
+    <h4><span>📚</span><span class="lang" data-en="Music Theory" data-de="Musiktheorie" data-fr="Théorie musicale">Musiktheorie</span></h4>
+    <p class="lang" data-en="Understand harmony, rhythm, and musical structure to enhance your playing and composition skills." data-de="Verstehen Sie Harmonie, Rhythmus und musikalische Struktur, um Ihr Spiel und Ihre Kompositionsfähigkeiten zu verbessern." data-fr="Comprenez l'harmonie, le rythme et la structure musicale pour améliorer votre jeu et vos compétences en composition.">Verstehen Sie Harmonie, Rhythmus und musikalische Struktur, um Ihr Spiel und Ihre Kompositionsfähigkeiten zu verbessern.</p>
+  </div>
+  <div class="exploration-card">
+    <h4><span>👂</span><span class="lang" data-en="Ear Training" data-de="Gehörbildung" data-fr="Formation de l'oreille">Gehörbildung</span></h4>
+    <p class="lang" data-en="Develop your musical ear to recognize intervals, chords, and melodies for better musical understanding." data-de="Entwickeln Sie Ihr musikalisches Gehör, um Intervalle, Akkorde und Melodien für besseres musikalisches Verständnis zu erkennen." data-fr="Développez votre oreille musicale pour reconnaître les intervalles, accords et mélodies pour une meilleure compréhension musicale.">Entwickeln Sie Ihr musikalisches Gehör, um Intervalle, Akkorde und Melodien für besseres musikalisches Verständnis zu erkennen.</p>
+  </div>
+  <div class="exploration-card">
+    <h4><span>🏛️</span><span class="lang" data-en="Music History" data-de="Musikgeschichte" data-fr="Histoire de la musique">Musikgeschichte</span></h4>
+    <p class="lang" data-en="Explore different musical periods and styles to bring depth and context to your performances." data-de="Erkunden Sie verschiedene Musikepochen und -stile, um Ihren Aufführungen Tiefe und Kontext zu verleihen." data-fr="Explorez différentes périodes et styles musicaux pour apporter profondeur et contexte à vos performances.">Erkunden Sie verschiedene Musikepochen und -stile, um Ihren Aufführungen Tiefe und Kontext zu verleihen.</p>
+  </div>
+  <div class="exploration-card">
+    <h4><span>🎨</span><span class="lang" data-en="Improvisation & Composition" data-de="Improvisation & Komposition" data-fr="Improvisation et composition">Improvisation & Komposition</span></h4>
+    <p class="lang" data-en="Unleash your creativity through spontaneous playing and creating your own musical pieces." data-de="Entfesseln Sie Ihre Kreativität durch spontanes Spiel und das Erschaffen eigener Musikstücke." data-fr="Libérez votre créativité par le jeu spontané et la création de vos propres pièces musicales.">Entfesseln Sie Ihre Kreativität durch spontanes Spiel und das Erschaffen eigener Musikstücke.</p>
+  </div>
+  <div class="exploration-card">
+    <h4><span>🎭</span><span class="lang" data-en="Performance Training" data-de="Auftrittstraining" data-fr="Préparation aux prestations scéniques">Auftrittstraining</span></h4>
+    <p class="lang" data-en="Build confidence and stage presence for recitals, competitions, and public performances." data-de="Bauen Sie Selbstvertrauen und Bühnenpräsenz für Vorspiele, Wettbewerbe und öffentliche Auftritte auf." data-fr="Développez confiance et présence scénique pour récitals, concours et performances publiques.">Bauen Sie Selbstvertrauen und Bühnenpräsenz für Vorspiele, Wettbewerbe und öffentliche Auftritte auf.</p>
+  </div>
+</div>
+</section>
+
+<section><h2 class="section-heading lang" data-en="About the teacher" data-de="Über mich" data-fr="À propos de moi">Über mich</h2><p class="lang" data-en="My name is Diane, I'm 27 years old, and I'm from Munich. After finishing school, I moved to Vienna to study piano pedagogy at the MDW. In addition to my classical training, I work as a singer and pianist in my band. Alongside my teaching, I perform regularly at concerts. For me, the stage and teaching go hand in hand." data-de="Ich heiße Diane, bin 27 Jahre alt und komme aus München. Nach meinem Schulabschluss ging ich nach Wien und studierte Klavierpädagogik an der MDW. Zusätzlich zu meiner klassischen Ausbildung bin ich als Sängerin und Pianistin in meiner Band aktiv. Neben meiner pädagogischen Arbeit spiele ich regelmäßig auf Konzerten. Die Bühne und das Unterrichten gehören für mich untrennbar zusammen." data-fr="Je m'appelle Diane, j'ai 27 ans et je viens de Munich. Après mon baccalauréat, je me suis installée à Vienne pour étudier la pédagogie du piano à la MDW. En plus de ma formation classique, je suis chanteuse et pianiste au sein de mon groupe. Parallèlement à mon travail d'enseignante, je me produis régulièrement sur scène. Pour moi, la scène et l'enseignement sont indissociables.">Ich heiße Diane, bin 27 Jahre alt und komme aus München. Nach meinem Schulabschluss ging ich nach Wien und studierte Klavierpädagogik an der MDW. Zusätzlich zu meiner klassischen Ausbildung bin ich als Sängerin und Pianistin in meiner Band aktiv. Neben meiner pädagogischen Arbeit spiele ich regelmäßig auf Konzerten. Die Bühne und das Unterrichten gehören für mich untrennbar zusammen.</p><h3 class="lang" data-en="Piano Lessons with Joy and Individuality" data-de="Klavierunterricht mit Freude und Individualitä" data-fr="Des cours de piano avec joie et individualité">Klavierunterricht mit Freude und Individualitä</h3><p class="lang" data-en="My lessons are for children, teenagers, and adults, both beginners and advanced students. Whether you're interested in classical music, pop, or other styles, I tailor my teaching to your preferences. Creativity is central to my approach, supported by improvisation and composition. I'm happy to help you prepare for competitions, exams, or auditions at music schools, and to organize a structured study plan. Everyone learns differently, so I adapt my methods and pace to your needs. My approach: learning without pressure, with patience, motivation, and open communication. This creates a relaxed atmosphere where progress comes naturally." data-de="Mein Unterricht richtet sich an Kinder, Jugendliche und Erwachsene, beginnend sowie fortgeschritten. Egal ob klassische Musik, Popmusik oder andere Musikstile; ich richte mich nach den Interessen meiner Schüler und Schülerinnen. Kreativität soll im Unterricht nicht zu kurz kommen und durch Improvisation und Kompositionen unterstützt werden. Die Vorbereitung auf Wettbewerbe, Prüfungen oder Aufnahmeprüfungen an weiterführenden Schulen unterstütze ich gerne und helfe dabei einen strukturierten Plan zu organisieren. Jeder Mensch lernt anders, deshalb gestalte ich den Unterricht individuell und passe Methoden und Tempo an die Bedürfnisse meiner Schülerinnen an. Mein Ansatz: Lernen ohne Druck, mit Geduld, Motivation und offener Kommunikation. Dadurch entsteht eine entspannte Atmosphäre, in der Fortschritte ganz natürlich wachsen können." data-fr="Mes cours s'adressent aux enfants, aux adolescents et aux adultes, débutants comme avancés. Que ce soit pour la musique classique, la pop ou d'autres styles, je m'adapte aux centres d'intérêt de mes élèves. La créativité occupe une place importante dans mon enseignement, encouragée par l'improvisation et la composition. Je vous accompagne avec plaisir dans la préparation aux concours, examens ou auditions pour les écoles supérieures, et vous aide à organiser un plan structuré. Chacun apprend différemment, c'est pourquoi j'adapte mes méthodes et le rythme à vos besoins. Ma philosophie : apprendre sans pression, avec patience, motivation et une communication ouverte. Ainsi se crée une atmosphère détendue où les progrès s'épanouissent naturellement.">Mein Unterricht richtet sich an Kinder, Jugendliche und Erwachsene, beginnend sowie fortgeschritten. Egal ob klassische Musik, Popmusik oder andere Musikstile; ich richte mich nach den Interessen meiner Schüler und Schülerinnen. Kreativität soll im Unterricht nicht zu kurz kommen und durch Improvisation und Kompositionen unterstützt werden. Die Vorbereitung auf Wettbewerbe, Prüfungen oder Aufnahmeprüfungen an weiterführenden Schulen unterstütze ich gerne und helfe dabei einen strukturierten Plan zu organisieren. Jeder Mensch lernt anders, deshalb gestalte ich den Unterricht individuell und passe Methoden und Tempo an die Bedürfnisse meiner Schülerinnen an. Mein Ansatz: Lernen ohne Druck, mit Geduld, Motivation und offener Kommunikation. Dadurch entsteht eine entspannte Atmosphäre, in der Fortschritte ganz natürlich wachsen können.</p>
 <p class="lang" data-en="Whether for fun or with bigger goals, let me accompany you on your musical journey. I want
 to share my joy and enthusiasm for music, and provide a solid foundation of knowledge." data-de="Ob als Hobby oder mit größeren Zielen: lassen Sie mich Sie auf Ihrem Weg begleiten. Ich
 möchte Freude und Begeisterung für Musik weitergeben und fundiertes Wissen vermitteln." data-fr="Que ce soit par loisir ou avec des objectifs plus ambitieux, laissez-moi vous accompagner
@@ -129,6 +265,7 @@ möchte Freude und Begeisterung für Musik weitergeben und fundiertes Wissen ver
           <h4 style="margin: 4 0 4px 0;font-size:15px; class="lang" data-en="Single Lesson" data-de="Einzelunterricht" data-fr="Cours individuels">Einzelunterricht</h4>
           <ul class="info-list">
             <li>€35 - 30 min.</li>
+            <li>€50 - 45 min.</li>
             <li>€60 - 60 min.</li>
           </ul>
         </div>
@@ -138,6 +275,7 @@ möchte Freude und Begeisterung für Musik weitergeben und fundiertes Wissen ver
           <h4 style="margin: 4 0 4px 0;font-size:15px; class="lang" data-en="Block Bookings" data-de="Blockbuchungen" data-fr="Cours en bloc">Blockbuchungen </h4>
           <ul class="info-list">
             <li>€300 - 10 × 30 min.</li>
+            <li>€400 - 10 × 45 min.</li>
             <li>€500 - 10 × 60 min.</li>
           </ul>
         </div> 

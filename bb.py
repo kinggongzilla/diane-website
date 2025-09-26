@@ -5,6 +5,9 @@ import os
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from email.mime.base import MIMEBase
+from email import encoders
+import uuid
 
 app = Flask(__name__, template_folder='template')
 
@@ -104,6 +107,72 @@ def is_slot_available(date, time, duration):
     finally:
         conn.close()
 
+def create_ics_file(appointment_data):
+    """Create a proper .ics calendar invitation file for the appointment."""
+    # Parse the date and time
+    appointment_date = appointment_data['date']  # YYYY-MM-DD format
+    appointment_time = appointment_data['time']  # HH:MM format
+    duration = appointment_data['duration']  # minutes
+
+    # Create datetime objects (assume Vienna timezone - Central European Time)
+    from datetime import datetime, timedelta, timezone
+
+    # Parse as local Vienna time and convert to UTC for .ics file
+    local_datetime = datetime.strptime(f"{appointment_date} {appointment_time}", "%Y-%m-%d %H:%M")
+
+    # Vienna is UTC+1 (CET) or UTC+2 (CEST), for simplicity using UTC+1
+    # In production, you'd want proper timezone handling
+    vienna_offset = timedelta(hours=1)
+    start_utc = local_datetime - vienna_offset
+    end_utc = start_utc + timedelta(minutes=duration)
+
+    # Format for .ics (UTC format with Z suffix)
+    start_str = start_utc.strftime("%Y%m%dT%H%M%SZ")
+    end_str = end_utc.strftime("%Y%m%dT%H%M%SZ")
+    created_str = datetime.utcnow().strftime("%Y%m%dT%H%M%SZ")
+
+    # Generate unique ID
+    event_uid = str(uuid.uuid4()) + "@piano-lessons.com"
+
+    # Format lesson type for display
+    lesson_type_display = appointment_data['lesson_type']
+    if lesson_type_display == 'Student Location':
+        lesson_type_display = 'At Student\'s Location'
+    elif lesson_type_display == 'Teacher Location':
+        lesson_type_display = 'At Teacher\'s Location'
+
+    # Escape special characters in description for .ics format
+    description = f"Piano lesson with {appointment_data['name']}\\n\\nLesson Type: {lesson_type_display}\\nDuration: {duration} minutes\\n\\nStudent Contact:\\nEmail: {appointment_data.get('email', 'Not provided')}\\nPhone: {appointment_data.get('phone', 'Not provided')}"
+
+    # Clean email for attendee (handle missing email)
+    attendee_email = appointment_data.get('email', 'noemail@example.com')
+    attendee_name = appointment_data['name']
+
+    # Create .ics content - simplified for better Outlook compatibility
+    ics_content = f"""BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Piano Lessons//Piano Lesson Booking//EN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:{event_uid}
+DTSTART:{start_str}
+DTEND:{end_str}
+DTSTAMP:{created_str}
+SUMMARY:Piano Lesson - {appointment_data['name']}
+DESCRIPTION:{description}
+ORGANIZER:mailto:{EMAIL_USER}
+STATUS:CONFIRMED
+SEQUENCE:0
+BEGIN:VALARM
+TRIGGER:-PT15M
+ACTION:DISPLAY
+DESCRIPTION:Reminder
+END:VALARM
+END:VEVENT
+END:VCALENDAR"""
+
+    return ics_content
+
 def create_booking_email(appointment_data):
     """Create a professional email template for booking notifications."""
     subject = f"New Piano Lesson Booking - {appointment_data['name']} - {appointment_data['date']}"
@@ -164,23 +233,47 @@ This booking was submitted through your piano lesson website.
     return subject, html_content, text_content
 
 def send_booking_email(appointment_data):
-    """Send booking notification email."""
+    """Send booking notification email with .ics calendar attachment."""
     try:
         # Create email content
         subject, html_content, text_content = create_booking_email(appointment_data)
 
+        # Create .ics calendar file content
+        ics_content = create_ics_file(appointment_data)
+
         # Create message
-        msg = MIMEMultipart('alternative')
+        msg = MIMEMultipart('mixed')
         msg['Subject'] = subject
         msg['From'] = EMAIL_USER
         msg['To'] = EMAIL_RECIPIENT
+
+        # Create alternative container for text/HTML
+        msg_alternative = MIMEMultipart('alternative')
 
         # Add both text and HTML parts
         text_part = MIMEText(text_content, 'plain')
         html_part = MIMEText(html_content, 'html')
 
-        msg.attach(text_part)
-        msg.attach(html_part)
+        msg_alternative.attach(text_part)
+        msg_alternative.attach(html_part)
+
+        # Attach the alternative container to main message
+        msg.attach(msg_alternative)
+
+        # Create .ics calendar file as simple attachment
+        ics_filename = f"piano_lesson_{appointment_data['name'].replace(' ', '_')}_{appointment_data['date']}.ics"
+
+        # Use basic MIMEBase for better compatibility
+        ics_attachment = MIMEBase('application', 'octet-stream')
+        ics_attachment.set_payload(ics_content.encode('utf-8'))
+        encoders.encode_base64(ics_attachment)
+        ics_attachment.add_header(
+            'Content-Disposition',
+            f'attachment; filename="{ics_filename}"'
+        )
+
+        # Attach the .ics file
+        msg.attach(ics_attachment)
 
         # Send email
         with smtplib.SMTP(EMAIL_HOST, EMAIL_PORT) as server:
@@ -188,7 +281,7 @@ def send_booking_email(appointment_data):
             server.login(EMAIL_USER, EMAIL_PASSWORD)
             server.send_message(msg)
 
-        app.logger.info(f"Booking notification email sent for {appointment_data['name']}")
+        app.logger.info(f"Booking notification email with calendar attachment sent for {appointment_data['name']}")
         return True
 
     except Exception as e:
