@@ -8,15 +8,12 @@ from email.mime.multipart import MIMEMultipart
 
 app = Flask(__name__, template_folder='template')
 
-# Database configuration
-DATABASE_PATH = 'appointments.db'
-
-# Email configuration
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USER = 'miniummm@gmail.com'
-EMAIL_PASSWORD = 'ulwx obpi eaye iajw'
-EMAIL_RECIPIENT = 'hauser-david@hotmail.com'  # Where to send booking notifications
+# Import configuration
+try:
+    from config import *
+except ImportError:
+    print("Error: config.py not found. Please copy config.sample.py to config.py and fill in your settings.")
+    exit(1)
 
 def get_db_connection():
     """Get a database connection with row factory for easier data access."""
@@ -205,6 +202,12 @@ def index():
     # Serve the main website instead of the booking-only template
     with open('index-main.html', 'r', encoding='utf-8') as f:
         return f.read()
+
+@app.route('/image_diane.png')
+def serve_image():
+    # Serve the profile image
+    from flask import send_file
+    return send_file('image_diane.png')
 
 #@app.route('/appointments', methods=['GET'])
 #def get_appointments():
