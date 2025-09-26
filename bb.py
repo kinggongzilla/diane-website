@@ -2,11 +2,21 @@ from flask import Flask, request, jsonify, render_template
 from datetime import datetime
 import sqlite3
 import os
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 app = Flask(__name__, template_folder='template')
 
 # Database configuration
 DATABASE_PATH = 'appointments.db'
+
+# Email configuration
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USER = 'miniummm@gmail.com'
+EMAIL_PASSWORD = 'ulwx obpi eaye iajw'
+EMAIL_RECIPIENT = 'hauser-david@hotmail.com'  # Where to send booking notifications
 
 def get_db_connection():
     """Get a database connection with row factory for easier data access."""
@@ -96,6 +106,97 @@ def is_slot_available(date, time, duration):
         return False
     finally:
         conn.close()
+
+def create_booking_email(appointment_data):
+    """Create a professional email template for booking notifications."""
+    subject = f"New Piano Lesson Booking - {appointment_data['name']} - {appointment_data['date']}"
+
+    # Format lesson type for display
+    lesson_type_display = appointment_data['lesson_type']
+    if lesson_type_display == 'Student Location':
+        lesson_type_display = 'At Student\'s Location'
+    elif lesson_type_display == 'Teacher Location':
+        lesson_type_display = 'At Teacher\'s Location'
+
+    # Create HTML email content
+    html_content = f"""
+    <html>
+    <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+        <h2 style="color: #7b3f00;">New Piano Lesson Booking</h2>
+
+        <div style="background-color: #f9f9f9; padding: 20px; border-radius: 8px; margin: 20px 0;">
+            <h3 style="margin-top: 0; color: #7b3f00;">Student Information</h3>
+            <p><strong>Name:</strong> {appointment_data['name']}</p>
+            <p><strong>Email:</strong> {appointment_data.get('email', 'Not provided')}</p>
+            <p><strong>Phone:</strong> {appointment_data.get('phone', 'Not provided')}</p>
+        </div>
+
+        <div style="background-color: #f0f8ff; padding: 20px; border-radius: 8px; margin: 20px 0;">
+            <h3 style="margin-top: 0; color: #7b3f00;">Lesson Details</h3>
+            <p><strong>Date:</strong> {appointment_data['date']}</p>
+            <p><strong>Time:</strong> {appointment_data['time']}</p>
+            <p><strong>Duration:</strong> {appointment_data['duration']} minutes</p>
+            <p><strong>Lesson Type:</strong> {lesson_type_display}</p>
+        </div>
+
+        <p style="margin-top: 30px; font-size: 14px; color: #666;">
+            This booking was submitted through your piano lesson website.
+        </p>
+    </body>
+    </html>
+    """
+
+    # Create plain text version
+    text_content = f"""
+New Piano Lesson Booking
+
+Student Information:
+- Name: {appointment_data['name']}
+- Email: {appointment_data.get('email', 'Not provided')}
+- Phone: {appointment_data.get('phone', 'Not provided')}
+
+Lesson Details:
+- Date: {appointment_data['date']}
+- Time: {appointment_data['time']}
+- Duration: {appointment_data['duration']} minutes
+- Lesson Type: {lesson_type_display}
+
+This booking was submitted through your piano lesson website.
+    """
+
+    return subject, html_content, text_content
+
+def send_booking_email(appointment_data):
+    """Send booking notification email."""
+    try:
+        # Create email content
+        subject, html_content, text_content = create_booking_email(appointment_data)
+
+        # Create message
+        msg = MIMEMultipart('alternative')
+        msg['Subject'] = subject
+        msg['From'] = EMAIL_USER
+        msg['To'] = EMAIL_RECIPIENT
+
+        # Add both text and HTML parts
+        text_part = MIMEText(text_content, 'plain')
+        html_part = MIMEText(html_content, 'html')
+
+        msg.attach(text_part)
+        msg.attach(html_part)
+
+        # Send email
+        with smtplib.SMTP(EMAIL_HOST, EMAIL_PORT) as server:
+            server.starttls()
+            server.login(EMAIL_USER, EMAIL_PASSWORD)
+            server.send_message(msg)
+
+        app.logger.info(f"Booking notification email sent for {appointment_data['name']}")
+        return True
+
+    except Exception as e:
+        app.logger.error(f"Failed to send booking email: {e}")
+        return False
 
 # Database is now used for appointments storage
 
@@ -259,6 +360,14 @@ def submit_appointment():
 
     if success:
         app.logger.info(f"Appointment saved: {appointment}")
+
+        # Send email notification
+        email_sent = send_booking_email(appointment)
+        if email_sent:
+            app.logger.info(f"Email notification sent for booking: {appointment['name']}")
+        else:
+            app.logger.warning(f"Failed to send email notification for booking: {appointment['name']}")
+
         return jsonify({'success': True, 'appointment': appointment, 'message': message})
     else:
         app.logger.error(f"Failed to save appointment: {message}")
